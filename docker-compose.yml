@@ -3,7 +3,7 @@ services:
 
 ######################################################################################################################
   perfana:
-    image: perfana/perfana:2.7.5-beta
+    image: perfana/perfana:2.8.4-beta
     init: true
     depends_on:
       - influxdb
@@ -36,12 +36,26 @@ services:
         "public": {
             "jaegerHost": "http://localhost:16686",
             "perfanaHost":"http://localhost:4000"
-        }
+        }",
+            grafanaInstances": [
+              {
+                "label": "Demo",
+                "clientUrl": "http://localhost:3000",
+                "serverUrl": "http://grafana:3000",
+                "orgId": "1",
+                "apiKey": "eyJrIjoiZkFvOWhKWGZJYlNuWlhGaTBSNWkyTFhDUTBUcVd2elYiLCJuIjoicGVyZmFuYSIsImlkIjoxfQ==",
+                "snapshotInstance": "true",
+                "trendsInstance": "true",
+                "username": "perfana",
+                "password": "perfana"
+
+    }
+  ],
        }'
     
   ######################################################################################################################
   perfana-grafana:
-    image: perfana/perfana-grafana:2.4.3-beta
+    image: perfana/perfana-grafana:2.4.4-beta 
     depends_on:
       - grafana
       - influxdb
@@ -55,7 +69,7 @@ services:
 
         ######################################################################################################################
   perfana-fixture:
-    image: perfana/perfana-fixture:2.3.2-demo
+    image: perfana/perfana-fixture:2.3.3-demo
     depends_on:
       - prometheus
       - grafana
@@ -73,7 +87,7 @@ services:
 
   ######################################################################################################################
   perfana-snapshot:
-    image: perfana/perfana-snapshot:2.3.0-beta
+    image: perfana/perfana-snapshot:2.3.1-beta
     depends_on:
       - mongo1
       - mongo2
@@ -86,7 +100,7 @@ services:
 
   ######################################################################################################################
   perfana-check:
-    image: perfana/perfana-check:2.3.2-beta
+    image: perfana/perfana-check:2.3.6
     expose:
     - 9191
     depends_on:
@@ -143,7 +157,7 @@ services:
       
   ######################################################################################################################
   optimus-prime-fe:
-    image: perfana/perfana-afterburner:2.3.0-beta
+    image: perfana/perfana-afterburner:2.3.2-beta
     depends_on:
      - mariadb
     environment:
@@ -158,6 +172,7 @@ services:
       "afterburner.remote.call.base_url": "http://optimus-prime-be:8080"
       "afterburner.remote.call.httpclient.socket.timeout.millis": "10000" 
       "JAVA_OPTS" : "-Xmx1024m"
+      "spring.zipkin.enabled": "true"
       "spring.zipkin.base-url": "http://jaeger:9411/"
       "spring.sleuth.sampler.probability": "0.1"
       "spring.sleuth.keys.http.headers": "perfana-test-run-id,perfana-request-name"
@@ -165,17 +180,17 @@ services:
       "spring.sleuth.propagation.tag.whitelisted-keys": "perfana-test-run-id,perfana-request-name"
       "spring.sleuth.propagation-keys": "perfana-test-run-id,perfana-request-name"
       "spring.sleuth.baggage-keys": "perfana-test-run-id,perfana-request-name"
-      "spring.datasource.url": "jdbc:mariadb://mariadb:3306/employees"
-      "spring.datasource.username": "root"
-      "spring.datasource.password": "perfana"
-      "spring.datasource.driver-class-name": "org.mariadb.jdbc.Driver"
+      "afterburner.mybatis.datasource.url": "jdbc:mariadb://mariadb:3306/employees"
+      "afterburner.mybatis.datasource.username": "root"
+      "afterburner.mybatis.datasource.password": "perfana"
+      "afterburner.mybatis.datasource.driver-class-name": "org.mariadb.jdbc.Driver"
 
     networks:
       - perfana
 
   ######################################################################################################################
   optimus-prime-be:
-    image: perfana/perfana-afterburner:2.3.0-beta
+    image: perfana/perfana-afterburner:2.3.2-beta
     depends_on:
      - mariadb
     environment:
@@ -187,6 +202,7 @@ services:
       "afterburner.remote.call.base_url": "http://wiremock:8080"
       "afterburner.remote.call.httpclient.socket.timeout.millis": "10000" 
       "JAVA_OPTS" : "-Xmx1024m"
+      "spring.zipkin.enabled": "true"
       "spring.zipkin.base-url": "http://jaeger:9411/"
       "spring.sleuth.sampler.probability": "0.1"
       "spring.sleuth.keys.http.headers": "perfana-test-run-id,perfana-request-name"
@@ -194,10 +210,10 @@ services:
       "spring.sleuth.propagation.tag.whitelisted-keys": "perfana-test-run-id,perfana-request-name"
       "spring.sleuth.propagation-keys": "perfana-test-run-id,perfana-request-name"
       "spring.sleuth.baggage-keys": "perfana-test-run-id,perfana-request-name"
-      "spring.datasource.url": "jdbc:mariadb://mariadb:3306/employees"
-      "spring.datasource.username": "root"
-      "spring.datasource.password": "perfana"
-      "spring.datasource.driver-class-name": "org.mariadb.jdbc.Driver"
+      "afterburner.mybatis.datasource.url": "jdbc:mariadb://mariadb:3306/employees"
+      "afterburner.mybatis.datasource.username": "root"
+      "afterburner.mybatis.datasource.password": "perfana"
+      "afterburner.mybatis.datasource.driver-class-name": "org.mariadb.jdbc.Driver"
 
     networks:
       - perfana
