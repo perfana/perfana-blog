@@ -3,12 +3,10 @@ services:
 
 ######################################################################################################################
   perfana:
-    image: perfana/perfana:2.8.4-beta
+    image: perfana/perfana-fe:2.10.15
     init: true
     depends_on:
       - influxdb
-      - perfana-grafana
-      - perfana-fixture
       - mongo1
       - mongo2
       - mongo3
@@ -35,29 +33,31 @@ services:
         "influxDbHost": "influxdb",
         "public": {
             "jaegerHost": "http://localhost:16686",
-            "perfanaHost":"http://localhost:4000"
-        }",
-            grafanaInstances": [
+            "perfanaHost": "http://localhost:4000"
+        },
+         "allowedFrameSrc": [                         
+         "http://localhost:3000",  
+         "http://localhost:16686"  
+        ],
+        "grafanaInstances": [
               {
                 "label": "Demo",
                 "clientUrl": "http://localhost:3000",
                 "serverUrl": "http://grafana:3000",
                 "orgId": "1",
-                "apiKey": "eyJrIjoiZkFvOWhKWGZJYlNuWlhGaTBSNWkyTFhDUTBUcVd2elYiLCJuIjoicGVyZmFuYSIsImlkIjoxfQ==",
-                "snapshotInstance": "true",
-                "trendsInstance": "true",
+                "apiKey": "eyJrIjoiY0NnUDhBc3U3ZGNXeU5GZGtGblVWYmVHSXZ3S0lyRVMiLCJuIjoiUGVyZmFuYSIsImlkIjoxfQ==",
+                "snapshotInstance": true,
+                "trendsInstance": true,
                 "username": "perfana",
                 "password": "perfana"
-
-    }
-  ],
+              }
+        ]
        }'
     
   ######################################################################################################################
   perfana-grafana:
-    image: perfana/perfana-grafana:2.4.4-beta 
+    image: perfana/perfana-grafana:2.5.1
     depends_on:
-      - grafana
       - influxdb
     environment:
       MONGO_URL: "mongodb://mongo1:27011,mongo2:27012,mongo3:27013/perfana?replicaSet=rs0"
@@ -69,15 +69,7 @@ services:
 
         ######################################################################################################################
   perfana-fixture:
-    image: perfana/perfana-fixture:2.3.3-demo
-    depends_on:
-      - prometheus
-      - grafana
-      - influxdb
-      - mongo1
-      - mongo2
-      - mongo3
-  
+    image: perfana/perfana-fixture:2.4.0-demo
     environment:
       MONGO_URL: "mongodb://mongo1:27011,mongo2:27012,mongo3:27013/perfana?replicaSet=rs0"
     ports:
@@ -87,7 +79,7 @@ services:
 
   ######################################################################################################################
   perfana-snapshot:
-    image: perfana/perfana-snapshot:2.3.1-beta
+    image: perfana/perfana-snapshot:2.3.9
     depends_on:
       - mongo1
       - mongo2
@@ -100,9 +92,11 @@ services:
 
   ######################################################################################################################
   perfana-check:
-    image: perfana/perfana-check:2.3.6
+    image: perfana/perfana-check:2.3.8
     expose:
     - 9191
+    ports:
+    - "9191:9191"
     depends_on:
       - mongo1
       - mongo2
@@ -217,7 +211,10 @@ services:
 
     networks:
       - perfana
-      
+
+    ######################################################################################################################
+  ######################################################################################################################
+    
   ######################################################################################################################
   wiremock:
     image: perfana/perfana-wiremock:2.0.0-beta
@@ -237,7 +234,7 @@ services:
 
   ######################################################################################################################
   grafana:
-    image: grafana/grafana:7.0.4
+    image: grafana/grafana:7.1.5
     ports:
       - "3000:3000"
     environment:
@@ -246,6 +243,8 @@ services:
         GF_SECURITY_ADMIN_USER: "perfana"
         GF_SECURITY_ADMIN_PASSWORD: "perfana"
         GF_SECURITY_ALLOW_EMBEDDING: "true"
+    volumes:
+      - grafana-storage:/var/lib/grafana
     networks:
       - perfana
   ######################################################################################################################
