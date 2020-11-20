@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-DOCKER_HOST_IP=$(docker network inspect perfana-demo_perfana -f '{{range .IPAM.Config}}{{.Gateway}}{{end}}')
+DOCKER_HOST_IP=$(docker network inspect perfana-blog_perfana -f '{{range .IPAM.Config}}{{.Gateway}}{{end}}')
 DOCKER_CMD="docker"
 CONFIG_FILE=$(pwd)/init-mongo.js
 

@@ -3,7 +3,8 @@ services:
 
 ######################################################################################################################
   perfana:
-    image: perfana/perfana-fe:2.10.15
+    # image: perfana/perfana-fe:2.10.17
+    image: registry.gitlab.com/perfana/perfana-fe:2.10.15-SLISLO-SNAPSHOT
     init: true
     depends_on:
       - influxdb
@@ -35,7 +36,7 @@ services:
             "jaegerHost": "http://localhost:16686",
             "perfanaHost": "http://localhost:4000"
         },
-         "allowedFrameSrc": [                         
+        "allowedFrameSrc": [                         
          "http://localhost:3000",  
          "http://localhost:16686"  
         ],
@@ -45,7 +46,7 @@ services:
                 "clientUrl": "http://localhost:3000",
                 "serverUrl": "http://grafana:3000",
                 "orgId": "1",
-                "apiKey": "eyJrIjoiY0NnUDhBc3U3ZGNXeU5GZGtGblVWYmVHSXZ3S0lyRVMiLCJuIjoiUGVyZmFuYSIsImlkIjoxfQ==",
+                "apiKey": "eyJrIjoiZ2s3cktjMlJocUk2aVZZWVpHR3oyTThQTEQwalBrbDciLCJuIjoiUGVyZmFuYSIsImlkIjoxfQ==",
                 "snapshotInstance": true,
                 "trendsInstance": true,
                 "username": "perfana",
@@ -69,7 +70,7 @@ services:
 
         ######################################################################################################################
   perfana-fixture:
-    image: perfana/perfana-fixture:2.4.0-demo
+    image: perfana/perfana-fixture:2.5.0-blog
     environment:
       MONGO_URL: "mongodb://mongo1:27011,mongo2:27012,mongo3:27013/perfana?replicaSet=rs0"
     ports:
@@ -109,11 +110,13 @@ services:
 
   ######################################################################################################################
   jenkins:
-    image: perfana/perfana-jenkins:2.3.0-beta
+    image: perfana/perfana-jenkins:2.3.1-blog
     expose:
     - 8080
     ports:
     - "8080:8080"
+    volumes:
+      - jenkins-storage:/var/jenkins_home
     networks:
       - perfana
     depends_on:
@@ -122,13 +125,14 @@ services:
   ######################################################################################################################
   influxdb:
     image: influxdb:1.7.6 
-    ports:
+    ports:  
     - "8086:8086"
     - "2003:2003"
     environment:
       INFLUXDB_GRAPHITE_ENABLED: "true"
     volumes:
     - "./influxdb/influxdb.conf:/etc/influxdb/influxdb.conf:ro"
+    - influxdb-storage:/var/lib/influxdb
     networks:
       - perfana
  
@@ -253,7 +257,7 @@ services:
     user:  root
     volumes:
       - ./prometheus-config:/prometheus
-      - ./data:/data
+      - prometheus-storage:/data
     command:
       - '--config.file=/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/data'
@@ -270,7 +274,7 @@ services:
     user:  root
     volumes:
       - ./prometheus-config:/prometheus
-      - ./data:/data
+      - prometheus-storage:/data
     command:
       - '--config.file=/prometheus/alertmanager.yml'
       - '--storage.path=/data'
@@ -292,10 +296,11 @@ services:
       - perfana
     volumes:
     - ./test_db:/docker-entrypoint-initdb.d  
+    - ./mariadb:/etc/mysql/conf.d
     deploy:
      resources:
        limits:
-         cpus: '1'
+         cpus: '0.5'
          memory: 1024M
 
   
@@ -364,6 +369,8 @@ networks:
 volumes:
   grafana-storage:
   jenkins-storage:
+  influxdb-storage:
+  prometheus-storage:
   mongo1-storage:
   mongo2-storage:
   mongo3-storage:
