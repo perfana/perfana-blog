@@ -4,7 +4,7 @@ services:
 ######################################################################################################################
   perfana:
     # image: perfana/perfana-fe:2.10.17
-    image: registry.gitlab.com/perfana/perfana-fe:2.10.15-SLISLO-SNAPSHOT
+    image: registry.gitlab.com/perfana/perfana-fe:2.10.18-SLISLO-SNAPSHOT
     init: true
     depends_on:
       - influxdb
@@ -46,7 +46,7 @@ services:
                 "clientUrl": "http://localhost:3000",
                 "serverUrl": "http://grafana:3000",
                 "orgId": "1",
-                "apiKey": "eyJrIjoiZ2s3cktjMlJocUk2aVZZWVpHR3oyTThQTEQwalBrbDciLCJuIjoiUGVyZmFuYSIsImlkIjoxfQ==",
+                "apiKey": "${GRAFANA_APIKEY}",
                 "snapshotInstance": true,
                 "trendsInstance": true,
                 "username": "perfana",
@@ -300,8 +300,8 @@ services:
     deploy:
      resources:
        limits:
-         cpus: '0.5'
-         memory: 1024M
+         cpus: '1'
+         memory: 512M
 
   
   

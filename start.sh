@@ -20,12 +20,13 @@ echo "Sleeping for 10 secs to give containers some time to start up..."
 sleep 10
 
 existingApiKeys=$(curl -X GET -H "Content-Type: application/json" http://perfana:perfana@localhost:3000/api/auth/keys 2>/dev/null)
-if [[ $existingApiKeys == [] ]] ; then
-    echo "Creating Grafana API key..."
-    apiKey=$(curl -v -X POST -H "Content-Type: application/json" -d '{"name":"Perfana","role":"Admin"}' http://perfana:perfana@localhost:3000/api/auth/keys 2>/dev/null | cut -d '"' -f 8)
-    echo "Replacing apiKey in docker-compose file with: ${apiKey}" 
-    sed -i "s/\"apiKey\": \".*\"/\"apiKey\": \"$apiKey\"/g" docker-compose.yml
-fi    
+
+export EPOCH=$(date +%s)
+
+apiKey=$(curl -v -X POST -H "Content-Type: application/json" -d '{"name":"'${EPOCH}'","role":"Admin"}' http://perfana:perfana@localhost:3000/api/auth/keys 2>/dev/null | cut -d '"' -f 8)
+
+echo "export GRAFANA_APIKEY=${apiKey}" 
+export GRAFANA_APIKEY=$apiKey
 
 echo "Starting Perfana ..."
 docker-compose --compatibility up -d perfana

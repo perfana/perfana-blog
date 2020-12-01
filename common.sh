@@ -11,3 +11,4 @@ if [ "$(uname)" != "Darwin" ] && [ "$(expr substr $(uname -s) 1 6)" == "CYGWIN" 
 fi
 
 export CONFIG_FILE DOCKER_CMD DOCKER_HOST_IP
+export GRAFANA_APIKEY='dummy'
