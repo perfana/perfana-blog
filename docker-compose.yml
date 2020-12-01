@@ -3,8 +3,7 @@ services:
 
 ######################################################################################################################
   perfana:
-    # image: perfana/perfana-fe:2.10.17
-    image: registry.gitlab.com/perfana/perfana-fe:2.10.15-SLISLO-SNAPSHOT
+    image: perfana/perfana-fe:2.10.21
     init: true
     depends_on:
       - influxdb
