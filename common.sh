@@ -10,5 +10,6 @@ if [ "$(uname)" != "Darwin" ] && [ "$(expr substr $(uname -s) 1 6)" == "CYGWIN" 
     DOCKER_CMD="winpty docker"
 fi
 
+export MSYS_NO_PATHCONV=1
 export CONFIG_FILE DOCKER_CMD DOCKER_HOST_IP
 export GRAFANA_APIKEY='dummy'
