@@ -69,7 +69,7 @@ services:
 
         ######################################################################################################################
   perfana-fixture:
-    image: perfana/perfana-fixture:2.5.0-blog
+    image: perfana/perfana-fixture:2.5.1-blog
     environment:
       MONGO_URL: "mongodb://mongo1:27011,mongo2:27012,mongo3:27013/perfana?replicaSet=rs0"
     ports:
