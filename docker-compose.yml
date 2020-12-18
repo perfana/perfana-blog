@@ -3,7 +3,7 @@ services:
 
 ######################################################################################################################
   perfana:
-    image: perfana/perfana-fe:2.10.21
+    image: perfana/perfana:native
     init: true
     depends_on:
       - influxdb
@@ -21,6 +21,7 @@ services:
       MONGO_URL: "mongodb://mongo1:27011,mongo2:27012,mongo3:27013/perfana?replicaSet=rs0"
       MONGO_OPLOG_URL: "mongodb://mongo1:27011,mongo2:27012,mongo3:27013/local?authSource=perfana&replicaSet=rs0"
       NODE_TLS_REJECT_UNAUTHORIZED: "0"
+      PORT: 3000
       METEOR_SETTINGS: '{
         "autoCreateApplications": true,
         "adminEmail":"admin@perfana.io",
@@ -69,11 +70,18 @@ services:
 
         ######################################################################################################################
   perfana-fixture:
-    image: perfana/perfana-fixture:2.5.1-blog
+    image: perfana/perfana-import:0.0.7
+    depends_on:
+      - influxdb
+      - grafana
+      - mongo1
+      - mongo2
+      - mongo3
+    volumes:
+      - ./import:/app/fixture/import
     environment:
-      MONGO_URL: "mongodb://mongo1:27011,mongo2:27012,mongo3:27013/perfana?replicaSet=rs0"
-    ports:
-      - "3002:3000"
+      MONGO_URL:    "mongodb://mongo1:27011,mongo2:27012,mongo3:27013/perfana?replicaSet=rs0"
+      GRAFANA_URL:  "http://localhost:3000"
     networks:
       - perfana
 

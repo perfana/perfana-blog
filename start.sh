@@ -10,8 +10,8 @@ sleep 1
 $DOCKER_CMD run -ti --rm -v $CONFIG_FILE:/init-mongo.js --net perfana-blog_perfana mongo:4.4-rc /usr/bin/mongo --host mongo1 --port 27011 /init-mongo.js
 
 echo "Bringing up databases that need a little bit more time to start up..."
-docker-compose --compatibility up -d mariadb
-docker-compose --compatibility up -d influxdb
+# docker-compose --compatibility up -d mariadb
+# docker-compose --compatibility up -d influxdb
 
 echo "Starting Grafana ..."
 docker-compose --compatibility up -d grafana
@@ -42,17 +42,17 @@ fi
 echo "Starting the rest of the environment ..."
 
 docker-compose --compatibility up -d perfana-grafana
-docker-compose --compatibility up -d perfana-snapshot
-docker-compose --compatibility up -d perfana-check
-docker-compose --compatibility up -d telegraf
-docker-compose --compatibility up -d wiremock
-docker-compose --compatibility up -d omnidb
-docker-compose --compatibility up -d prometheus
-docker-compose --compatibility up -d alertmanager
+# docker-compose --compatibility up -d perfana-snapshot
+# docker-compose --compatibility up -d perfana-check
+# docker-compose --compatibility up -d telegraf
+# docker-compose --compatibility up -d wiremock
+# docker-compose --compatibility up -d omnidb
+# docker-compose --compatibility up -d prometheus
+# docker-compose --compatibility up -d alertmanager
 docker-compose --compatibility up -d jaeger
-docker-compose --compatibility up -d optimus-prime-fe
-docker-compose --compatibility up -d optimus-prime-be
-docker-compose --compatibility up -d jenkins
+# docker-compose --compatibility up -d optimus-prime-fe
+# docker-compose --compatibility up -d optimus-prime-be
+# docker-compose --compatibility up -d jenkins
 
 
 echo "Done!"
