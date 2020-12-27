@@ -3,7 +3,7 @@ services:
 
 ######################################################################################################################
   perfana:
-    image: perfana/perfana-fe:2.10.21
+    image: perfana/perfana-fe:2.10.39
     init: true
     depends_on:
       - influxdb
@@ -17,6 +17,7 @@ services:
     networks:
       - perfana                                     
     environment:
+      PORT: 3000
       ROOT_URL: "http://localhost:4000"                   
       MONGO_URL: "mongodb://mongo1:27011,mongo2:27012,mongo3:27013/perfana?replicaSet=rs0"
       MONGO_OPLOG_URL: "mongodb://mongo1:27011,mongo2:27012,mongo3:27013/local?authSource=perfana&replicaSet=rs0"
@@ -346,13 +347,12 @@ services:
         
 #######################################################################################################################    
   omnidb:
-    image: taivokasper/omnidb
+    image: perfana/perfana-omnidb:1.0.0-blog
     expose:
     - 8888
     - 25482
     volumes:
-      - omnidb-storage:/etc/omnidb
-
+      - ./omnidb:/etc/omnidb:rw
     ports:
     - 8888:8080
     - 25482:25482
